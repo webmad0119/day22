@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>My First Map</title>
+    <style>
+        html,
+        body {
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            height: 100vh;
+            width: 100vw;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDwrQ06GHICvIaP59ik0GNAFIv1CXK1znc"></script>
+    <!-- <script type="text/javascript" src="main.js"></script> -->
+
+    <script>
+        function randomIntFromInterval(min, max) // min and max included
+        {
+            return Math.floor(Math.random() * (max - min + 1) + min);
+        }
+
+        var mapDOM = document.getElementById("map")
+        let coordinates = {
+            lat: 41.3977381,
+            lng: 2.190471916
+        }
+
+        var theMap = new google.maps.Map(mapDOM, {
+            zoom: 1,
+            center: coordinates
+        })
+
+        var marker1 = new google.maps.Marker({
+            map: theMap,
+            position: coordinates,
+            title: 'Ironhack Barcelona'
+        })
+
+        let citiesCoords = [
+            { lat: 42.9144, lng: 20.6897 },
+            { lat: -15.78, lng: 28.18 },
+            { lat: -33.92, lng: 18.435 },
+            { lat: -31.8996, lng: 26.88 }];
+
+
+        citiesCoords.forEach(coord => {
+            new google.maps.Marker({
+                map: theMap,
+                position: coord
+            })
+        })
+
+        for (var i = 0; i < 100; i++) {
+            var m = new google.maps.Marker({
+                map: theMap,
+                position: {
+                    lat: randomIntFromInterval(-90, 90),
+                    lng: randomIntFromInterval(-180, 180)
+                },
+                icon: (i % 2 === 0) ? "marker.png" : "marker2.png"
+            })
+        }
+
+    </script>
+</body>
+
+</html>
