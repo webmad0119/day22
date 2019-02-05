@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>My First Map</title>
+    <style>
+        html,
+        body {
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            height: 100vh;
+            width: 100vw;
+        }
+
+        #controls {
+            position: absolute;
+            top: 100px;
+            left: 10px;
+            background: blue;
+            padding: 5px;
+        }
+
+        #controls button {
+            font-size: 20px;
+            padding: 5px;
+            display: block;
+
+        }
+
+        #b1, #b2 {
+            position: absolute;
+        }         
+
+        #b1 {
+            left: 20px;
+            top: 100px;
+        }
+
+        #b2 {
+            left: 20px;
+            top: 120px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+    <button id="b1">Show markers</button>
+    <button id="b2">Give me some text!</button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDwrQ06GHICvIaP59ik0GNAFIv1CXK1znc"></script>
+    <!-- <script type="text/javascript" src="main.js"></script> -->
+
+    <script>
+        function randomIntFromInterval(min, max) // min and max included
+        {
+            return Math.floor(Math.random() * (max - min + 1) + min);
+        }
+
+        var mapDOM = document.getElementById("map")
+        let coordinates = {
+            lat: 41.3977381,
+            lng: 2.190471916
+        }
+
+        var theMap = new google.maps.Map(mapDOM, {
+            zoom: 10,
+            center: coordinates
+        })
+
+        const server = `http://localhost:3000`
+
+        function showText() {
+            const URL = `${server}/giveMeSomeText`
+
+            axios.get(URL).then((text) => {
+                alert(text.data.text)
+            })
+        }
+
+        function showMarkers() {
+            axios.get(`${server}/airports/300`).then((airports) => {
+                airports.data.forEach((airport) => {
+                    if (airport.coords === undefined || airport.coords.coordinates === undefined) return
+                    if (typeof airport.coords.coordinates[0] === "number" && typeof airport.coords.coordinates[1] === "number") {
+                        new google.maps.Marker({
+                            map: theMap,
+                            position: {
+                                lat: airport.coords.coordinates[1],
+                                lng: airport.coords.coordinates[0]
+                            },
+                            title: airport.name
+                        })
+                    }
+                })
+            })
+        }
+
+        document.getElementById("b1").onclick = showMarkers
+        document.getElementById("b2").onclick = showText
+    </script>
+</body>
+
+</html>
