@@ -35,6 +35,10 @@ app.get("/map", (req, res, next) => {
     res.render("index2")
 })
 
+app.get("/waypoints", (req, res, next) => {
+    res.render("waypoints")
+})
+
 app.get("/airports/:limit", (req, res, next) => {
     console.log(req.params.limit)
     Location.find({}, { _id: 0, name: 1, coords: 1 }).limit(+req.params.limit)

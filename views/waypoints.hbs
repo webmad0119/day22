@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+  <meta charset="utf-8">
+  <title>Waypoints in Directions</title>
+  <style>
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    #map {
+      height: 100vh;
+      width: 100vw;
+    }
+
+    #now {
+      position: absolute;
+      left: 20px;
+      top: 100px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="map"></div>
+  <button id="now">Calculate waypoint</button>
+
+  <script>
+    var waypts = [];
+
+    function initMap() {
+      var directionsService = new google.maps.DirectionsService;
+      var directionsDisplay = new google.maps.DirectionsRenderer;
+      var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 6,
+        center: { lat: 41.85, lng: -87.65 }
+      });
+
+
+      map.addListener('click', function (e) {
+        new google.maps.Marker({
+          map: map,
+          position: {
+            lat: e.latLng.lat(),
+            lng: e.latLng.lng()
+          }
+        })
+
+        waypts.push({
+          location: new google.maps.LatLng(e.latLng.lat(), e.latLng.lng()),
+          stopover: true
+        });
+      });
+
+      directionsDisplay.setMap(map);
+
+      document.getElementById("now").onclick = function () {
+        calculateAndDisplayRoute(directionsService, directionsDisplay);
+      }
+    }
+
+    function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+      directionsService.route({
+        origin: "New York",
+        destination: "San Francisco",
+        waypoints: waypts,
+        optimizeWaypoints: true,
+        travelMode: 'DRIVING'
+      }, function (response, status) {
+        if (status === 'OK') {
+          directionsDisplay.setDirections(response);
+
+        } else {
+          window.alert('Directions request failed due to ' + status);
+        }
+      });
+    }
+  </script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDwrQ06GHICvIaP59ik0GNAFIv1CXK1znc&callback=initMap">
+  </script>
+</body>
+
+</html>
